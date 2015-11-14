@@ -147,6 +147,10 @@ even is \" -b\" is specified."
                            (helm-ghq--source-update repo))
             :buffer "*helm-ghq-list*"))))
 
+(defun helm-ghq-list ()
+  (interactive)
+  (helm :sources 'helm-source-ghq))
+
 (provide 'helm-ghq)
 
 ;;; helm-ghq.el ends here
