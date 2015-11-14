@@ -40,6 +40,7 @@
 
 (defvar helm-ghq--action
   '(("Open File" . find-file)
+    ("Find file in repo" . helm-ghq--find-file-in-repo)
     ("Open File other window" . find-file-other-window)
     ("Open File other frame" . find-file-other-frame)
     ("Open Directory" . helm-ghq--open-dired)))
@@ -54,7 +55,8 @@
                            (cons (cdr candidate) (cdr candidate))))
     :keymap helm-generic-files-map
     :help-message helm-generic-file-help-message
-    :action helm-ghq--action)
+    :action helm-ghq--action
+    :persistent-action #'helm-ghq---quit-and-find-file-in-repo))
   "Helm source for ghq.")
 
 (defun helm-ghq--files-match-only-basename (candidate)
@@ -134,6 +136,19 @@ even is \" -b\" is specified."
     :candidates '(" ") ; dummy
     :action (lambda (_c)
               (helm-ghq--update-repository repo))))
+
+(defun helm-ghq--quit-and-find-file-in-repo (repo)
+  (message "FOOOOOOO")
+  (helm-quit-and-execute-action #'helm-ghq--find-file-in-repo))
+
+(defun helm-ghq--find-file-in-repo (repo)
+  (let ((default-directory (file-name-as-directory repo)))
+    (message "FOO i'm in find-file-in-repo %s" repo)
+    (helm :sources (list (helm-ghq--source default-directqory)
+                         (helm-ghq--source-update repo))
+          :buffer "*helm-ghq-find-file-in-repo*")
+    (message "BAR i'm in find-file-in-repo: complete: %s" repo)
+    ))
 
 ;;;###autoload
 (defun helm-ghq ()
